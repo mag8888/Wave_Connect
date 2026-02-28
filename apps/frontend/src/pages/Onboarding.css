@@ -55,29 +55,28 @@
     margin-top: 24px;
 }
 
-.sms-inputs {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
+.welcome-step {
+    gap: 16px;
 }
 
-.sms-char-input {
-    width: 56px;
-    height: 64px;
-    font-size: 24px;
-    text-align: center;
+.welcome-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.fallback-avatar {
     background: var(--bg-surface-elevated);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
     font-weight: 600;
-    transition: all var(--transition-fast);
-}
-
-.sms-char-input:focus {
-    border-color: var(--accent-base);
-    box-shadow: 0 0 0 1px var(--accent-base);
-    background: var(--bg-surface-hover);
+    color: var(--accent-light);
+    border: 1px solid var(--border-color);
 }
 
 .options-grid {

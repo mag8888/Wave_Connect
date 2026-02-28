@@ -1,15 +1,19 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/Button';
-import { Input } from '../components/Input';
 import { Card } from '../components/Card';
+import { useTelegram } from '../lib/twa';
 import './Onboarding.css';
 
-type Step = 'phone' | 'sms' | 'role' | 'goal';
+type Step = 'welcome' | 'role' | 'goal';
 
 export default function Onboarding() {
-    const [step, setStep] = useState<Step>('phone');
+    const [step, setStep] = useState<Step>('welcome');
     const navigate = useNavigate();
+    const { user } = useTelegram();
+
+    const firstName = user?.first_name || 'Guest';
+    const avatarUrl = user?.photo_url;
 
     const handleNext = (nextStep: Step | 'home') => {
         if (nextStep === 'home') {
@@ -27,33 +31,20 @@ export default function Onboarding() {
             </div>
 
             <Card variant="glass" className="onboarding-card">
-                {step === 'phone' && (
-                    <div className="step-content fade-in">
-                        <h2 className="step-title">Enter your phone</h2>
-                        <p className="step-desc">We'll send you a confirmation code</p>
-                        <Input
-                            type="tel"
-                            placeholder="+1 234 567 8900"
-                            autoFocus
-                            className="mt-6"
-                        />
-                        <Button className="mt-6" fullWidth onClick={() => handleNext('sms')}>
-                            Continue
-                        </Button>
-                    </div>
-                )}
+                {step === 'welcome' && (
+                    <div className="step-content fade-in welcome-step">
+                        {avatarUrl ? (
+                            <img src={avatarUrl} alt="Avatar" className="welcome-avatar mb-4" />
+                        ) : (
+                            <div className="welcome-avatar fallback-avatar mb-4">
+                                {firstName.charAt(0)}
+                            </div>
+                        )}
+                        <h2 className="step-title">Welcome, {firstName}!</h2>
+                        <p className="step-desc">Your Telegram profile is successfully linked.</p>
 
-                {step === 'sms' && (
-                    <div className="step-content fade-in">
-                        <h2 className="step-title">Enter code</h2>
-                        <p className="step-desc">Sent to your number</p>
-                        <div className="sms-inputs mt-6">
-                            {[1, 2, 3, 4].map(i => (
-                                <input key={i} type="text" maxLength={1} className="sms-char-input" />
-                            ))}
-                        </div>
-                        <Button className="mt-6" fullWidth onClick={() => handleNext('role')}>
-                            Verify
+                        <Button className="mt-8" fullWidth onClick={() => handleNext('role')}>
+                            Complete Profile
                         </Button>
                     </div>
                 )}
@@ -96,7 +87,7 @@ export default function Onboarding() {
             </Card>
 
             <div className="onboarding-footer">
-                Step {['phone', 'sms', 'role', 'goal'].indexOf(step) + 1} of 4
+                Step {['welcome', 'role', 'goal'].indexOf(step) + 1} of 3
             </div>
         </div>
     );

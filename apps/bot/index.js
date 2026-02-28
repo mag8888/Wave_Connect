@@ -11,7 +11,7 @@ if (!token) {
 
 const bot = new Telegraf(token);
 // Replace with your actual front-end URL when deployed
-const webAppUrl = process.env.WEBAPP_URL || 'https://example.com';
+const webAppUrl = process.env.WEBAPP_URL || 'https://wave-match.up.railway.app';
 
 bot.command('start', (ctx) => {
     ctx.reply('Welcome to Wave Match! 🌊\nClick the button below to launch the networking platform.', {

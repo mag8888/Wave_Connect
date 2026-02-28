@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Card } from '../components/Card';
 import { Tag } from '../components/Tag';
-import { ChevronDown, ChevronUp, MapPin, Building, Target } from 'lucide-react';
+import { ChevronDown, ChevronUp, MapPin, Building, Target, Edit2 } from 'lucide-react';
+import { useTelegram } from '../lib/twa';
 import './Profile.css';
 
 export default function Profile() {
@@ -10,6 +11,10 @@ export default function Profile() {
         goals: false,
         interests: true
     });
+    const { user } = useTelegram();
+
+    const firstName = user?.first_name || 'Alex M.';
+    const avatarUrl = user?.photo_url || 'https://i.pravatar.cc/300?u=a042581f4e29026704d';
 
     const toggleSection = (section: keyof typeof sections) => {
         setSections(prev => ({ ...prev, [section]: !prev[section] }));
@@ -21,14 +26,17 @@ export default function Profile() {
         <div className="profile-page page-content">
             {/* Base Info */}
             <div className="profile-header">
-                <div className="profile-avatar-large" style={{ backgroundImage: 'url(https://i.pravatar.cc/300?u=a042581f4e29026704d)' }} />
-                <h1 className="profile-name">Alex M.</h1>
-                <p className="profile-role">Tech Entrepreneur</p>
+                <div className="profile-avatar-large" style={{ backgroundImage: `url(${avatarUrl})` }} />
+                <h1 className="profile-name">{firstName}</h1>
+                <p className="profile-role text-accent">Tech Entrepreneur</p>
 
                 <div className="profile-meta mt-4">
                     <span className="meta-item"><MapPin size={16} /> Dubai, UAE</span>
                     <span className="meta-item"><Building size={16} /> Waveform LLC</span>
                 </div>
+                <button className="edit-profile-btn mt-4 flex items-center gap-2 mx-auto text-sm text-secondary hover:text-primary transition-colors">
+                    <Edit2 size={14} /> Edit Data
+                </button>
             </div>
 
             {/* Progress Bar */}

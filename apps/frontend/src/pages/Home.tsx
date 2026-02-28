@@ -1,26 +1,36 @@
 import { Card } from '../components/Card';
 import { Button } from '../components/Button';
 import { Tag } from '../components/Tag';
-
+import { useTelegram } from '../lib/twa';
 import './Home.css';
 
 export default function Home() {
+    const { user } = useTelegram();
+    const firstName = user?.first_name || 'Alex';
+    const avatarUrl = user?.photo_url || 'https://i.pravatar.cc/150?u=a042581f4e29026704d';
+
     return (
         <div className="home-page page-content">
             <header className="home-header">
                 <div>
-                    <h1 className="text-2xl font-bold">Good evening, Alex</h1>
-                    <p className="text-secondary">Here are your best matches today</p>
+                    <h1 className="text-2xl font-bold">Good evening, {firstName}</h1>
+                    <p className="text-secondary">Here are the top leaders for you today</p>
                 </div>
-                <div className="avatar-placeholder">A</div>
+                <div
+                    className="avatar-placeholder"
+                    style={avatarUrl ? { backgroundImage: `url(${avatarUrl})`, backgroundSize: 'cover', backgroundPosition: 'center', border: 'none' } : {}}
+                >
+                    {!avatarUrl && firstName.charAt(0)}
+                </div>
             </header>
 
-            {/* Recommended Contacts */}
+            {/* Top Leaders */}
             <section className="dashboard-section mt-8">
-                <div className="section-header">
+                <div className="section-header flex-between">
                     <h2 className="section-title flex items-center gap-2">
-                        <span className="text-gradient">🔥 Recommendations</span>
+                        <span className="text-gradient">🔥 Top Leaders</span>
                     </h2>
+                    <span className="see-all">See all</span>
                 </div>
 
                 <div className="horizontal-scroll">

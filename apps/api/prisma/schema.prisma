@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  telegramId BigInt  @unique
+  firstName String
+  lastName  String?
+  username  String?
+  photoUrl  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  profile   Profile?
+  matchesAsUser1 Match[] @relation("MatchesAsUser1")
+  matchesAsUser2 Match[] @relation("MatchesAsUser2")
+}
+
+model Profile {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  role        String?  // Entrepreneur, Investor, etc
+  turnover    String?  // $1M - $5M
+  industry    String?  // SaaS / Fintech
+  experience  String?  // 8 years
+  location    String?  // Dubai, UAE
+  company     String?  // Waveform LLC
+  
+  helpOffer   String?  // I can share expertise in...
+  goal1Year   String?
+  goal5Year   String?
+  mission     String?
+  
+  tags        String[] // ["Investments", "Scaling", ...]
+  
+  completion  Int      @default(0) // 0-100%
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Match {
+  id        String   @id @default(uuid())
+  user1Id   String
+  user2Id   String
+  
+  user1     User     @relation("MatchesAsUser1", fields: [user1Id], references: [id], onDelete: Cascade)
+  user2     User     @relation("MatchesAsUser2", fields: [user2Id], references: [id], onDelete: Cascade)
+  
+  score     Int      // Match percentage 0-100
+  status    String   // PENDING, ACCEPTED, REJECTED
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([user1Id, user2Id])
+}

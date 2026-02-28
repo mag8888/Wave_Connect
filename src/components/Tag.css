@@ -1,0 +1,46 @@
+.tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-full);
+    font-weight: 500;
+    transition: all var(--transition-fast);
+    cursor: pointer;
+    user-select: none;
+}
+
+.tag:active {
+    transform: scale(0.95);
+}
+
+/* Sizes */
+.tag-sm {
+    height: 28px;
+    padding: 0 12px;
+    font-size: 12px;
+}
+
+.tag-md {
+    height: 36px;
+    padding: 0 16px;
+    font-size: 14px;
+}
+
+/* Variants */
+.tag-default {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+}
+
+.tag-default:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+.tag-active {
+    background: var(--accent-gradient);
+    color: white;
+    border: 1px solid transparent;
+    box-shadow: 0 0 12px var(--accent-glow);
+}

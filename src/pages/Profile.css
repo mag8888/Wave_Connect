@@ -1,0 +1,130 @@
+.profile-page {
+    animation: fadeIn 0.4s ease-out;
+}
+
+.profile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.profile-avatar-large {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    background-color: var(--bg-surface-elevated);
+    border: 4px solid var(--bg-deep);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+    margin-bottom: 16px;
+}
+
+.profile-name {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.profile-role {
+    color: #0A84FF;
+    font-weight: 500;
+    margin-top: 4px;
+}
+
+.profile-meta {
+    display: flex;
+    gap: 16px;
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Progress */
+.progress-card {
+    padding: 16px 20px;
+}
+
+.progress-track {
+    width: 100%;
+    height: 6px;
+    background: var(--bg-surface-hover);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--accent-gradient);
+    border-radius: var(--radius-full);
+    transition: width 1s ease-out;
+}
+
+.text-xs {
+    font-size: 12px;
+}
+
+/* Collapsible Sections */
+.section-card {
+    padding: 0;
+    overflow: hidden;
+}
+
+.section-header-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.section-body {
+    padding: 0 24px 24px 24px;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.info-label {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+.info-value {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.tags-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.text-accent {
+    color: #0A84FF;
+}
+
+.pl-6 {
+    padding-left: 24px;
+}

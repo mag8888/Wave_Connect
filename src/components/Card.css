@@ -1,0 +1,31 @@
+.card {
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    overflow: hidden;
+    position: relative;
+    transition: transform var(--transition-medium), box-shadow var(--transition-medium);
+}
+
+.card-elevated {
+    background: var(--bg-surface-elevated);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+}
+
+.card-elevated:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-color-hover);
+}
+
+.card-glass {
+    background: rgba(28, 28, 30, 0.4);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.card-outline {
+    background: transparent;
+    border: 1px solid var(--border-color);
+}

@@ -178,13 +178,16 @@ export default function Onboarding() {
 
                 {step === 'hobbies' && (
                     <div className="step-content fade-in">
-                        <h2 className="step-title">Your hobbies & interests?</h2>
-                        <p className="step-desc">Select a few or add your own.</p>
+                        <h2 className="step-title">{t('onboarding.hobbies_title')}</h2>
+                        <p className="step-desc">{t('onboarding.hobbies_desc')}</p>
                         <div className="flex flex-wrap gap-2 mt-6 justify-center">
                             {['Golf', 'Biohacking', 'Sailing', 'Web3', 'AI', 'Travel', 'Investing', 'Fitness'].map(hobby => (
                                 <button
                                     key={hobby}
-                                    className={`px-4 py-2 rounded-full border transition-colors ${selectedHobbies.includes(hobby) ? 'bg-primary border-primary text-white' : 'bg-surface border-white-10 text-secondary'}`}
+                                    className={`px-4 py-2 rounded-xl border text-sm font-medium transition-all group hover:scale-105 active:scale-95 ${selectedHobbies.includes(hobby)
+                                            ? 'bg-[linear-gradient(135deg,#8B5CF6,#3B82F6)] border-transparent text-white shadow-[0_0_15px_rgba(139,92,246,0.3)]'
+                                            : 'bg-surface border-white-10 text-secondary hover:text-white hover:border-white-20'
+                                        }`}
                                     onClick={() => toggleHobby(hobby)}
                                 >
                                     {hobby}
@@ -194,7 +197,7 @@ export default function Onboarding() {
                         <div className="mt-6 w-full flex gap-2 items-stretch max-w-sm mx-auto">
                             <input
                                 type="text"
-                                placeholder="Add custom..."
+                                placeholder={t('onboarding.hobbies_add_custom')}
                                 className="flex-1 bg-surface border border-white-10 rounded-xl px-4 py-3 min-w-0 placeholder:text-secondary text-sm focus:outline-none focus:border-[rgba(139,92,246,0.5)] transition-colors"
                                 value={customHobby}
                                 onChange={(e) => setCustomHobby(e.target.value)}
@@ -220,10 +223,11 @@ export default function Onboarding() {
                         </div>
 
                         <Button
-                            className="mt-8"
+                            className="mt-8 transition-all hover:scale-[1.02] shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_25px_rgba(16,185,129,0.5)]"
                             fullWidth
                             onClick={() => handleNext('home')}
                             disabled={isSubmitting}
+                            style={{ background: 'linear-gradient(135deg, #3b82f6, #10b981)', border: 'none', color: '#fff', fontWeight: 'bold' }}
                         >
                             {isSubmitting ? '...' : t('onboarding.complete')}
                         </Button>
@@ -232,7 +236,7 @@ export default function Onboarding() {
             </Card>
 
             <div className="onboarding-footer">
-                {t('onboarding.step_of', { current: ['welcome', 'role', 'goal'].indexOf(step) + 1, total: 3 })}
+                {t('onboarding.step_of', { current: ['welcome', 'role', 'goal', 'hobbies'].indexOf(step) + 1, total: 4 })}
             </div>
         </div>
     );

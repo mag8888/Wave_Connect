@@ -68,6 +68,10 @@ const resources = {
                 "goal_investment": "Finding Investment",
                 "goal_mentorship": "Mentorship",
                 "goal_hiring": "Hiring Top Talent",
+                "hobbies_title": "Your hobbies & interests?",
+                "hobbies_desc": "Select a few or add your own.",
+                "hobbies_add_custom": "Add custom...",
+                "complete": "Complete & Start",
                 "finish": "Finish & Start Matching"
             },
             "nav": {
@@ -167,6 +171,10 @@ const resources = {
                 "goal_investment": "Поиск инвестиций",
                 "goal_mentorship": "Менторство",
                 "goal_hiring": "Поиск талантов",
+                "hobbies_title": "Ваши хобби и увлечения?",
+                "hobbies_desc": "Выберите несколько или добавьте свои.",
+                "hobbies_add_custom": "Добавить свое...",
+                "complete": "Завершить",
                 "finish": "Завершить и начать"
             },
             "nav": {

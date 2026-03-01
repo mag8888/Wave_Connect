@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../components/Button';
@@ -12,12 +12,24 @@ export default function Referral() {
     const navigate = useNavigate();
     const { user } = useTelegram();
     const [copied, setCopied] = useState(false);
+    const [stats, setStats] = useState({ invited: 0, earned: 10 });
+    const [loading, setLoading] = useState(true);
 
-    // Normally this comes from a backend endpoint
-    const stats = {
-        invited: 3,
-        earned: 30
-    };
+    useEffect(() => {
+        if (user?.id) {
+            fetch(`https://wave-match-production.up.railway.app/api/users/${user.id}/referrals`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data && typeof data.invited === 'number') {
+                        setStats({ invited: data.invited, earned: data.earned });
+                    }
+                })
+                .catch(err => console.error('Failed to load referral stats', err))
+                .finally(() => setLoading(false));
+        } else {
+            setLoading(false);
+        }
+    }, [user?.id]);
 
     // Replace BOT_USERNAME with the actual bot username
     const botUrl = `https://t.me/WaveMatchBot?start=ref_${user?.id || 'guest'}`;
@@ -61,11 +73,15 @@ export default function Referral() {
             <Card variant="glass" className="referral-card mt-2">
                 <div className="flex gap-4 mb-6">
                     <div className="stat-box flex-1 bg-surface p-4 rounded-xl border border-white-10 text-center">
-                        <span className="block text-2xl font-bold text-gradient mb-1">{stats.invited}</span>
+                        <span className="block text-2xl font-bold text-gradient mb-1">
+                            {loading ? '...' : stats.invited}
+                        </span>
                         <span className="text-xs text-secondary font-medium uppercase">{t('referral.stats_invited')}</span>
                     </div>
                     <div className="stat-box flex-1 bg-surface p-4 rounded-xl border border-white-10 text-center">
-                        <span className="block text-2xl font-bold text-accent mb-1">{stats.earned}</span>
+                        <span className="block text-2xl font-bold text-accent mb-1">
+                            {loading ? '...' : stats.earned}
+                        </span>
                         <span className="text-xs text-secondary font-medium uppercase">{t('referral.stats_earned')}</span>
                     </div>
                 </div>

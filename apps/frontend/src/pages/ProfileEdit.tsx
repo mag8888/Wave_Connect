@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../components/Button';
 import { Card } from '../components/Card';
-import { ArrowLeft, Sparkles, Copy, Check } from 'lucide-react';
+import { ArrowLeft, Sparkles, Copy, Check, Award, Book, Star, Zap, GraduationCap, Plus, Trash2 } from 'lucide-react';
 import { getAIPrompt } from '../i18n';
 import './ProfileEdit.css';
 
@@ -26,8 +26,19 @@ export default function ProfileEdit() {
         goal1Year: '',
         goal5Year: '',
         mission: '',
-        tags: ''
+        tags: '',
+        hobbies: '',
+        books: '',
+        education: [] as { name: string, icon: string }[]
     });
+
+    const [newEduName, setNewEduName] = useState('');
+    const [newEduIcon, setNewEduIcon] = useState('Award');
+
+    // Lucide Icons Map
+    const IconMap: Record<string, any> = {
+        Award, Book, Star, Zap, GraduationCap
+    };
 
     const handleCopyPrompt = () => {
         const prompt = getAIPrompt(i18n.language);
@@ -47,7 +58,10 @@ export default function ProfileEdit() {
                 goal1Year: parsed.goal1Year || '',
                 goal5Year: parsed.goal5Year || '',
                 mission: parsed.mission || '',
-                tags: Array.isArray(parsed.tags) ? parsed.tags.join(', ') : (parsed.tags || '')
+                tags: Array.isArray(parsed.tags) ? parsed.tags.join(', ') : (parsed.tags || ''),
+                hobbies: Array.isArray(parsed.hobbies) ? parsed.hobbies.join(', ') : (parsed.hobbies || ''),
+                books: Array.isArray(parsed.books) ? parsed.books.join(', ') : (parsed.books || ''),
+                education: Array.isArray(parsed.education) ? parsed.education : []
             });
             setParseError(false);
             setParseSuccess(true);
@@ -194,12 +208,75 @@ export default function ProfileEdit() {
                 </div>
 
                 <div className="form-group mt-4">
-                    <label>{t('profile.interests')} (comma separated)</label>
+                    <label>{t('profile.hobbies')} (comma separated)</label>
                     <input
                         className="form-input"
-                        value={formData.tags}
-                        onChange={e => setFormData({ ...formData, tags: e.target.value })}
+                        value={formData.hobbies}
+                        onChange={e => setFormData({ ...formData, hobbies: e.target.value })}
                     />
+                </div>
+
+                <div className="form-group mt-4">
+                    <label>{t('profile.books')} (comma separated)</label>
+                    <input
+                        className="form-input"
+                        value={formData.books}
+                        onChange={e => setFormData({ ...formData, books: e.target.value })}
+                    />
+                </div>
+
+                <div className="form-group mt-4">
+                    <label>{t('profile.education')}</label>
+                    <div className="education-list mb-3">
+                        {formData.education.map((edu, idx) => {
+                            const IconCmp = IconMap[edu.icon] || Award;
+                            return (
+                                <div key={idx} className="flex items-center justify-between bg-surface p-3 rounded border border-white-10 mb-2">
+                                    <div className="flex items-center gap-2">
+                                        <IconCmp size={16} className="text-secondary" />
+                                        <span className="text-sm">{edu.name}</span>
+                                    </div>
+                                    <button
+                                        className="text-danger opacity-70 hover:opacity-100"
+                                        onClick={() => setFormData(prev => ({ ...prev, education: prev.education.filter((_, i) => i !== idx) }))}
+                                    >
+                                        <Trash2 size={16} />
+                                    </button>
+                                </div>
+                            );
+                        })}
+                    </div>
+                    <div className="flex gap-2">
+                        <select
+                            className="form-input w-auto p-2"
+                            value={newEduIcon}
+                            onChange={(e) => setNewEduIcon(e.target.value)}
+                        >
+                            <option value="Award">Award 🏆</option>
+                            <option value="Book">Book 📖</option>
+                            <option value="Star">Star ⭐</option>
+                            <option value="Zap">Zap ⚡</option>
+                            <option value="GraduationCap">Cap 🎓</option>
+                        </select>
+                        <input
+                            className="form-input flex-1"
+                            placeholder="e.g. MBA Skolkovo"
+                            value={newEduName}
+                            onChange={(e) => setNewEduName(e.target.value)}
+                        />
+                        <Button
+                            variant="secondary"
+                            className="px-4"
+                            onClick={() => {
+                                if (newEduName.trim()) {
+                                    setFormData(prev => ({ ...prev, education: [...prev.education, { name: newEduName.trim(), icon: newEduIcon }] }));
+                                    setNewEduName('');
+                                }
+                            }}
+                        >
+                            <Plus size={16} />
+                        </Button>
+                    </div>
                 </div>
 
                 <Button className="mt-8 mb-8" fullWidth onClick={handleSave}>

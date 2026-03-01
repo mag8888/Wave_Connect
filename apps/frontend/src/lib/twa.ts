@@ -6,13 +6,20 @@ export const initTWA = () => {
     tg.ready();
     tg.expand();
 
-    // Set theme colors if needed to match Wave Match branding 
-    // or rely on Telegram's native CSS variables like var(--tg-theme-bg-color)
+    // Sync user with backend
     try {
-        tg.setHeaderColor('#0A0A0B');
-        tg.setBackgroundColor('#0A0A0B');
+        if (tg.initDataUnsafe?.user) {
+            fetch('https://wave-match-production.up.railway.app/api/users/init', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user: tg.initDataUnsafe.user,
+                    startParam: tg.initDataUnsafe.start_param
+                })
+            }).catch(e => console.error('Failed to init user:', e));
+        }
     } catch (e) {
-        console.error('TWA init error:', e);
+        console.error('API call error:', e);
     }
 };
 

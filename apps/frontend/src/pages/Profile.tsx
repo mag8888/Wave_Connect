@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Card } from '../components/Card';
 import { Tag } from '../components/Tag';
-import { ChevronDown, ChevronUp, MapPin, Building, Target, Edit2, Globe, Award, Zap } from 'lucide-react';
+import { ChevronDown, ChevronUp, MapPin, Building, Target, Edit2, Globe, Award, Zap, Gift } from 'lucide-react';
 import { useTelegram } from '../lib/twa';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -66,6 +66,24 @@ export default function Profile() {
                     <div className="progress-fill" style={{ width: `${completion}%` }} />
                 </div>
                 <p className="text-xs text-secondary mt-2">{t('profile.complete_prompt')}</p>
+            </Card>
+
+            {/* Referral Promo */}
+            <Card variant="glass" className="mt-4 border border-[rgba(139,92,246,0.2)] bg-[linear-gradient(135deg,rgba(139,92,246,0.1),transparent)] cursor-pointer hover:bg-[rgba(139,92,246,0.15)] transition-colors" onClick={() => navigate('/referral')}>
+                <div className="flex items-center justify-between p-1">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center bg-[rgba(139,92,246,0.2)]">
+                            <Gift size={20} className="text-accent" />
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-sm leading-tight text-white">{t('referral.invite_friends')}</h3>
+                            <p className="text-xs text-accent mt-0.5">{t('referral.get_matches')}</p>
+                        </div>
+                    </div>
+                    <div className="text-secondary">
+                        <ChevronDown size={18} style={{ transform: 'rotate(-90deg)' }} />
+                    </div>
+                </div>
             </Card>
 
             {/* Business Block */}

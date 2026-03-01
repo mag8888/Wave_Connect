@@ -127,6 +127,17 @@ const resources = {
                 "save": "Save Profile",
                 "apply_success": "Profile magic applied!",
                 "apply_error": "Invalid format from ChatGPT."
+            },
+            "referral": {
+                "invite_friends": "Invite Friends",
+                "get_matches": "Get +10 Matches",
+                "title": "Invite & Connect",
+                "subtitle": "Bring your friends to Wave Match and get 10 free match credits for each friend who joins and completes their profile.",
+                "share_link": "Share Invite Link",
+                "copy_link": "Copy Link",
+                "copied": "Copied!",
+                "stats_invited": "Friends Invited",
+                "stats_earned": "Matches Earned"
             }
         }
     },
@@ -215,6 +226,17 @@ const resources = {
                 "save": "Сохранить профиль",
                 "apply_success": "Магия сработала!",
                 "apply_error": "Неверный формат от ChatGPT."
+            },
+            "referral": {
+                "invite_friends": "Пригласить друзей",
+                "get_matches": "Получить +10 Мэтчей",
+                "title": "Приглашай и знакомься",
+                "subtitle": "Пригласите друзей в Wave Match и получите 10 бесплатных мэтчей за каждого, кто присоединится и заполнит профиль.",
+                "share_link": "Поделиться ссылкой",
+                "copy_link": "Скопировать ссылку",
+                "copied": "Скопировано!",
+                "stats_invited": "Друзей приглашено",
+                "stats_earned": "Мэтчей заработано"
             }
         }
     }

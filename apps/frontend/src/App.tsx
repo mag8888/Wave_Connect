@@ -4,6 +4,7 @@ import Onboarding from './pages/Onboarding';
 import Home from './pages/Home';
 import Profile from './pages/Profile';
 import ProfileEdit from './pages/ProfileEdit';
+import Referral from './pages/Referral';
 import Match from './pages/Match';
 import Tables from './pages/Tables';
 import Masterminds from './pages/Masterminds';
@@ -30,6 +31,7 @@ function App() {
           <Route path="/messages" element={<Messages />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/edit" element={<ProfileEdit />} />
+          <Route path="/referral" element={<Referral />} />
           <Route path="/subscription" element={<Subscription />} />
         </Routes>
         <BottomNav />

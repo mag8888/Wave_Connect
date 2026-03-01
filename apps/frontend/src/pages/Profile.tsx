@@ -3,6 +3,7 @@ import { Card } from '../components/Card';
 import { Tag } from '../components/Tag';
 import { ChevronDown, ChevronUp, MapPin, Building, Target, Edit2 } from 'lucide-react';
 import { useTelegram } from '../lib/twa';
+import { useTranslation } from 'react-i18next';
 import './Profile.css';
 
 export default function Profile() {
@@ -12,6 +13,7 @@ export default function Profile() {
         interests: true
     });
     const { user } = useTelegram();
+    const { t } = useTranslation();
 
     const firstName = user?.first_name || 'Alex M.';
     const avatarUrl = user?.photo_url || 'https://i.pravatar.cc/300?u=a042581f4e29026704d';
@@ -35,26 +37,26 @@ export default function Profile() {
                     <span className="meta-item"><Building size={16} /> Waveform LLC</span>
                 </div>
                 <button className="edit-profile-btn mt-4 flex items-center gap-2 mx-auto text-sm text-secondary hover:text-primary transition-colors">
-                    <Edit2 size={14} /> Edit Data
+                    <Edit2 size={14} /> {t('profile.edit_data')}
                 </button>
             </div>
 
             {/* Progress Bar */}
             <Card variant="outline" className="progress-card mt-6">
                 <div className="flex-between mb-2">
-                    <span className="text-sm font-semibold">Profile Completion</span>
+                    <span className="text-sm font-semibold">{t('profile.profile_completion')}</span>
                     <span className="text-gradient font-bold">{completion}%</span>
                 </div>
                 <div className="progress-track">
                     <div className="progress-fill" style={{ width: `${completion}%` }} />
                 </div>
-                <p className="text-xs text-secondary mt-2">Complete your profile to get 2x more matches</p>
+                <p className="text-xs text-secondary mt-2">{t('profile.complete_prompt')}</p>
             </Card>
 
             {/* Business Block */}
             <Card variant="elevated" className="section-card mt-6">
                 <div className="section-header-toggle" onClick={() => toggleSection('business')}>
-                    <h2 className="section-title">Business Avatar</h2>
+                    <h2 className="section-title">{t('profile.business_avatar')}</h2>
                     {sections.business ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                 </div>
 
@@ -62,21 +64,21 @@ export default function Profile() {
                     <div className="section-body mt-4">
                         <div className="info-grid">
                             <div className="info-item">
-                                <span className="info-label">Turnover</span>
+                                <span className="info-label">{t('profile.turnover')}</span>
                                 <span className="info-value">$1M - $5M</span>
                             </div>
                             <div className="info-item">
-                                <span className="info-label">Industry</span>
+                                <span className="info-label">{t('profile.industry')}</span>
                                 <span className="info-value">SaaS / Fintech</span>
                             </div>
                             <div className="info-item">
-                                <span className="info-label">Experience</span>
+                                <span className="info-label">{t('profile.experience')}</span>
                                 <span className="info-value">8 years</span>
                             </div>
                         </div>
 
                         <div className="mt-4">
-                            <span className="info-label">How can I help</span>
+                            <span className="info-label">{t('profile.how_can_help')}</span>
                             <p className="text-sm mt-1">I can share expertise in scaling B2B SaaS, setting up remote sales teams, and early-stage fundraising strategies.</p>
                         </div>
                     </div>
@@ -86,7 +88,7 @@ export default function Profile() {
             {/* Goals */}
             <Card variant="elevated" className="section-card mt-4">
                 <div className="section-header-toggle" onClick={() => toggleSection('goals')}>
-                    <h2 className="section-title">Vision & Goals</h2>
+                    <h2 className="section-title">{t('profile.vision_goals')}</h2>
                     {sections.goals ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                 </div>
 
@@ -95,21 +97,21 @@ export default function Profile() {
                         <div className="goal-item mb-4">
                             <div className="flex items-center gap-2 mb-1">
                                 <Target size={16} className="text-accent" />
-                                <span className="font-semibold">1 Year Goal</span>
+                                <span className="font-semibold">{t('profile.1_year_goal')}</span>
                             </div>
                             <p className="text-sm text-secondary pl-6">Close Seed round of $2M and expand to MENA region.</p>
                         </div>
                         <div className="goal-item mb-4">
                             <div className="flex items-center gap-2 mb-1">
                                 <Target size={16} className="text-accent" />
-                                <span className="font-semibold">5 Year Goal</span>
+                                <span className="font-semibold">{t('profile.5_year_goal')}</span>
                             </div>
                             <p className="text-sm text-secondary pl-6">Reach $100M valuation and prepare for Series B or acquisition.</p>
                         </div>
                         <div className="goal-item">
                             <div className="flex items-center gap-2 mb-1">
                                 <Target size={16} className="text-accent" />
-                                <span className="font-semibold">Mission</span>
+                                <span className="font-semibold">{t('profile.mission')}</span>
                             </div>
                             <p className="text-sm text-secondary pl-6">Democratize access to tier-1 business networking for emerging founders.</p>
                         </div>
@@ -120,7 +122,7 @@ export default function Profile() {
             {/* Interests */}
             <Card variant="elevated" className="section-card mt-4 mb-8">
                 <div className="section-header-toggle" onClick={() => toggleSection('interests')}>
-                    <h2 className="section-title">Interests</h2>
+                    <h2 className="section-title">{t('profile.interests')}</h2>
                     {sections.interests ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                 </div>
 

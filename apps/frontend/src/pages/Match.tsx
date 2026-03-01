@@ -1,7 +1,7 @@
 import { Input } from '../components/Input';
 import { Button } from '../components/Button';
 import { Card } from '../components/Card';
-import { Search, MapPin, Briefcase, Filter, MessageCircle, BookmarkPlus } from 'lucide-react';
+import { Search, MapPin, Briefcase, Filter, MessageCircle, BookmarkPlus, Sparkles } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useTelegram } from '../lib/twa';
 import { API_URL } from '../config';
@@ -11,6 +11,8 @@ export default function Match() {
     const { user } = useTelegram();
     const [matches, setMatches] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [analyzingMatches, setAnalyzingMatches] = useState<Record<string, boolean>>({});
+    const [matchAnalyses, setMatchAnalyses] = useState<Record<string, string>>({});
 
     useEffect(() => {
         if (user?.id) {
@@ -27,6 +29,28 @@ export default function Match() {
             setLoading(false);
         }
     }, [user?.id]);
+
+    const analyzeMatch = async (theirId: string) => {
+        if (!user?.id) return;
+
+        setAnalyzingMatches(prev => ({ ...prev, [theirId]: true }));
+        try {
+            const res = await fetch(`${API_URL}/api/matches/analyze`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ myId: user.id, theirId })
+            });
+            const data = await res.json();
+            if (data.analysis) {
+                setMatchAnalyses(prev => ({ ...prev, [theirId]: data.analysis }));
+            }
+        } catch (e) {
+            console.error('Failed to analyze match', e);
+        } finally {
+            setAnalyzingMatches(prev => ({ ...prev, [theirId]: false }));
+        }
+    };
+
     return (
         <div className="match-page page-content">
             <header className="mb-6">
@@ -90,6 +114,33 @@ export default function Match() {
                                         </span>
                                     ))}
                                 </div>
+                            )}
+
+                            {matchAnalyses[m.id] ? (
+                                <div className="mt-4 p-4 rounded-xl bg-[rgba(139,92,246,0.1)] border border-[rgba(139,92,246,0.2)]">
+                                    <div className="flex items-center gap-2 mb-2 text-accent text-sm font-semibold">
+                                        <Sparkles size={14} /> AI Matchmaker
+                                    </div>
+                                    <p className="text-sm text-secondary whitespace-pre-wrap leading-relaxed">
+                                        {matchAnalyses[m.id]}
+                                    </p>
+                                </div>
+                            ) : (
+                                <Button
+                                    variant="secondary"
+                                    className="mt-4 w-full text-sm font-semibold transition-all hover:scale-[1.01]"
+                                    style={{ border: '1px dashed rgba(139,92,246,0.4)', color: '#8B5CF6', backgroundColor: 'transparent' }}
+                                    onClick={() => analyzeMatch(m.id)}
+                                    disabled={analyzingMatches[m.id]}
+                                >
+                                    {analyzingMatches[m.id] ? (
+                                        'Analyzing...'
+                                    ) : (
+                                        <div className="flex items-center justify-center gap-2">
+                                            <Sparkles size={16} /> Почему мы подходим друг другу?
+                                        </div>
+                                    )}
+                                </Button>
                             )}
 
                             <div className="result-actions mt-4">

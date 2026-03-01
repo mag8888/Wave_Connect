@@ -2,10 +2,14 @@ import express from 'express';
 import cors from 'cors';
 import * as dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
+import OpenAI from 'openai';
 
 dotenv.config();
 
 const prisma = new PrismaClient();
+const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY
+});
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -268,6 +272,57 @@ app.get('/api/matches/:telegramId', async (req, res) => {
     } catch (error) {
         console.error('Error fetching matches:', error);
         res.status(500).json({ error: 'Failed to fetch matches' });
+    }
+});
+
+app.post('/api/matches/analyze', async (req, res) => {
+    try {
+        const { myId, theirId } = req.body;
+
+        if (!process.env.OPENAI_API_KEY) {
+            return res.status(500).json({ error: 'OpenAI API key not configured' });
+        }
+
+        const me = await prisma.user.findUnique({
+            where: { telegramId: BigInt(myId) },
+            include: { profile: true }
+        });
+        const them = await prisma.user.findUnique({
+            where: { telegramId: BigInt(theirId) },
+            include: { profile: true }
+        });
+
+        if (!me || !them || !me.profile || !them.profile) {
+            return res.status(404).json({ error: 'Profiles not found' });
+        }
+
+        const prompt = `Пользователь 1: Роль - ${me.profile.role}, Индустрия - ${me.profile.industry}, Цель - ${me.profile.goal1Year}, Хобби - ${me.profile.hobbies?.join(', ')}, Опыт - ${me.profile.experience}, Чем может помочь - ${me.profile.helpOffer}.
+Пользователь 2: Имя - ${them.firstName}, Роль - ${them.profile.role}, Индустрия - ${them.profile.industry}, Цель - ${them.profile.goal1Year}, Хобби - ${them.profile.hobbies?.join(', ')}, Опыт - ${them.profile.experience}, Чем может помочь - ${them.profile.helpOffer}.
+Напиши короткий текст (питч) для Пользователя 1 о Пользователе 2, объясняющий почему им стоит познакомиться. 
+Текст должен быть СТРОГО в таком формате:
+
+Вы с ${them.firstName || 'этим пользователем'} можете быть интересны друг другу, потому что:
+1. [первая причина на основе их общих индустрий, целей или опыта]
+2. [вторая причина, как они могут дополнить друг друга]
+3. [третья причина на основе хобби или личных качеств]
+
+Если вам интересно встретиться, я напишу о вас этому пользователю.
+
+Не добавляй никаких приветствий или других слов, только этот шаблон.`;
+
+        const response = await openai.chat.completions.create({
+            model: "gpt-4o-mini",
+            messages: [{ role: "user", content: prompt }],
+            temperature: 0.7,
+            max_tokens: 400,
+        });
+
+        const analysis = response.choices[0].message.content.trim();
+        res.json({ analysis });
+
+    } catch (error) {
+        console.error('Error analyzing match:', error);
+        res.status(500).json({ error: 'Failed to analyze match' });
     }
 });
 

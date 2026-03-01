@@ -209,11 +209,66 @@ app.get('/api/users/:telegramId/referrals', async (req, res) => {
     }
 });
 
-app.get('/api/matches', (req, res) => {
-    // Placeholder response
-    res.json([
-        { id: 1, name: 'David S.', role: 'Investor', matchPercent: 96 }
-    ]);
+app.get('/api/matches/:telegramId', async (req, res) => {
+    try {
+        const telegramId = BigInt(req.params.telegramId);
+
+        const currentUser = await prisma.user.findUnique({
+            where: { telegramId },
+            include: { profile: true }
+        });
+
+        if (!currentUser) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Fetch up to 20 other users who have a profile
+        const rawUsers = await prisma.user.findMany({
+            where: {
+                telegramId: { not: telegramId },
+                profile: { isNot: null }
+            },
+            include: { profile: true },
+            take: 20,
+            orderBy: { createdAt: 'desc' }
+        });
+
+        // Calculate match percentage and format response
+        const matches = rawUsers.map(u => {
+            let matchPercent = Math.floor(Math.random() * (99 - 60 + 1)) + 60; // Base random 60-99%
+
+            // Simple boosting logic based on shared data
+            if (currentUser.profile && u.profile) {
+                if (currentUser.profile.role === u.profile.role) matchPercent += 5;
+                if (currentUser.profile.goal1Year === u.profile.goal1Year) matchPercent += 10;
+
+                // Compare tags/hobbies (rough intersection)
+                const cTags = currentUser.profile.tags || [];
+                const uTags = u.profile.tags || [];
+                const sharedTags = cTags.filter(t => uTags.includes(t));
+                matchPercent += (sharedTags.length * 5);
+
+                matchPercent = Math.min(99, matchPercent); // Cap at 99%
+            }
+
+            return {
+                id: u.telegramId.toString(),
+                firstName: u.firstName,
+                lastName: u.lastName,
+                photoUrl: u.photoUrl,
+                matchPercent,
+                profile: u.profile
+            };
+        });
+
+        // Sort by match percentage descending
+        matches.sort((a, b) => b.matchPercent - a.matchPercent);
+
+        res.json(matches);
+    } catch (error) {
+        console.error('Error fetching matches:', error);
+        res.status(500).json({ error: 'Failed to fetch matches' });
+    }
 });
 
 app.listen(port, () => {

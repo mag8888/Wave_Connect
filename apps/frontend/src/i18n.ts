@@ -2,6 +2,32 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import { tg } from './lib/twa';
 
+const aiPromptEn = `Act as an elite business profiler. I will provide you with a bio or social media links. Extract the information into exactly this JSON format:
+{
+  "turnover": "$1M - $5M",
+  "industry": "SaaS / Fintech",
+  "experience": "8 years",
+  "helpOffer": "I can share expertise in scaling B2B SaaS...",
+  "goal1Year": "Close Seed round and expand",
+  "goal5Year": "Reach $100M valuation",
+  "mission": "Democratize access to tier-1 business networking",
+  "tags": ["Investments", "Scaling", "IT"]
+}
+If any data is missing from the bio, guess intelligently based on context or return "Not specified". Return ONLY raw JSON without markdown.`;
+
+const aiPromptRu = `Действуй как элитный бизнес-профайлер. Я предоставлю тебе биографию или ссылки на соцсети. Извлеки информацию строго в этом формате JSON:
+{
+  "turnover": "1M - 5M $",
+  "industry": "SaaS / Финтех",
+  "experience": "8 лет",
+  "helpOffer": "Могу поделиться опытом в масштабировании...",
+  "goal1Year": "Закрыть Seed раунд",
+  "goal5Year": "Достигнуть оценки $100M",
+  "mission": "Демократизировать доступ к премиум нетворкингу",
+  "tags": ["Инвестиции", "Масштабирование", "IT"]
+}
+Если каких-то данных нет, догадайся логично из контекста или напиши "Не указано". Верни ТОЛЬКО сырой JSON без markdown.`;
+
 // Define resources for English and Russian
 const resources = {
     en: {
@@ -45,7 +71,8 @@ const resources = {
                 "seat": "seat"
             },
             "profile": {
-                "edit_data": "Edit Data",
+                "edit_data": "Edit Profile",
+                "lang_switch": "Change Language",
                 "profile_completion": "Profile Completion",
                 "complete_prompt": "Complete your profile to get 2x more matches",
                 "business_avatar": "Business Avatar",
@@ -58,6 +85,22 @@ const resources = {
                 "5_year_goal": "5 Year Goal",
                 "mission": "Mission",
                 "interests": "Interests"
+            },
+            "edit": {
+                "title": "Edit Profile",
+                "ai_magic_title": "✨ AI Magic Fill",
+                "ai_magic_desc": "Fill your profile in 3 clicks using ChatGPT",
+                "step1": "1. Copy this prompt",
+                "copy_prompt": "Copy Prompt",
+                "prompt_copied": "Copied!",
+                "step2": "2. Send it to ChatGPT along with your bio/links",
+                "step3": "3. Paste the ChatGPT response here",
+                "paste_placeholder": "Paste JSON from ChatGPT here...",
+                "apply_magic": "Apply Magic",
+                "manual_edit": "Or fill manually",
+                "save": "Save Profile",
+                "apply_success": "Profile magic applied!",
+                "apply_error": "Invalid format from ChatGPT."
             }
         }
     },
@@ -103,6 +146,7 @@ const resources = {
             },
             "profile": {
                 "edit_data": "Редактировать",
+                "lang_switch": "Сменить язык",
                 "profile_completion": "Заполненность профиля",
                 "complete_prompt": "Заполните профиль, чтобы получать в 2x больше мэтчей",
                 "business_avatar": "Бизнес Аватар",
@@ -115,14 +159,33 @@ const resources = {
                 "5_year_goal": "Цель на 5 лет",
                 "mission": "Миссия",
                 "interests": "Интересы"
+            },
+            "edit": {
+                "title": "Редактирование",
+                "ai_magic_title": "✨ AI Заполнение",
+                "ai_magic_desc": "Заполните профиль в 3 клика с помощью ChatGPT",
+                "step1": "1. Скопируйте этот промт",
+                "copy_prompt": "Скопировать промт",
+                "prompt_copied": "Скопировано",
+                "step2": "2. Отправьте его в ChatGPT вместе с вашей биографией или ссылками",
+                "step3": "3. Вставьте ответ от ChatGPT сюда",
+                "paste_placeholder": "Вставьте JSON от ChatGPT...",
+                "apply_magic": "Применить Магию",
+                "manual_edit": "Или заполните вручную",
+                "save": "Сохранить профиль",
+                "apply_success": "Магия сработала!",
+                "apply_error": "Неверный формат от ChatGPT."
             }
         }
     }
 };
 
+export const getAIPrompt = (language: string) => language === 'ru' ? aiPromptRu : aiPromptEn;
+
 // Check telegram user language or fallback to English
 const tgUserLang = tg.initDataUnsafe?.user?.language_code;
-const defaultLang = tgUserLang === 'ru' ? 'ru' : 'en';
+const savedLang = localStorage.getItem('appLang');
+const defaultLang = savedLang || (tgUserLang === 'ru' ? 'ru' : 'en');
 
 i18n
     .use(initReactI18next)

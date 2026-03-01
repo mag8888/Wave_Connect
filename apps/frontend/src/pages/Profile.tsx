@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Card } from '../components/Card';
 import { Tag } from '../components/Tag';
-import { ChevronDown, ChevronUp, MapPin, Building, Target, Edit2 } from 'lucide-react';
+import { ChevronDown, ChevronUp, MapPin, Building, Target, Edit2, Globe } from 'lucide-react';
 import { useTelegram } from '../lib/twa';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import './Profile.css';
 
 export default function Profile() {
@@ -13,7 +14,8 @@ export default function Profile() {
         interests: true
     });
     const { user } = useTelegram();
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const navigate = useNavigate();
 
     const firstName = user?.first_name || 'Alex M.';
     const avatarUrl = user?.photo_url || 'https://i.pravatar.cc/300?u=a042581f4e29026704d';
@@ -36,9 +38,21 @@ export default function Profile() {
                     <span className="meta-item"><MapPin size={16} /> Dubai, UAE</span>
                     <span className="meta-item"><Building size={16} /> Waveform LLC</span>
                 </div>
-                <button className="edit-profile-btn mt-4 flex items-center gap-2 mx-auto text-sm text-secondary hover:text-primary transition-colors">
-                    <Edit2 size={14} /> {t('profile.edit_data')}
-                </button>
+                <div className="flex items-center justify-center gap-4 mt-4">
+                    <button onClick={() => navigate('/profile/edit')} className="edit-profile-btn flex items-center gap-2 text-sm text-secondary hover:text-primary transition-colors">
+                        <Edit2 size={14} /> {t('profile.edit_data')}
+                    </button>
+                    <button
+                        onClick={() => {
+                            const newLang = i18n.language === 'ru' ? 'en' : 'ru';
+                            i18n.changeLanguage(newLang);
+                            localStorage.setItem('appLang', newLang);
+                        }}
+                        className="edit-profile-btn flex items-center gap-2 text-sm text-secondary hover:text-primary transition-colors"
+                    >
+                        <Globe size={14} /> {i18n.language.toUpperCase()}
+                    </button>
+                </div>
             </div>
 
             {/* Progress Bar */}

@@ -3,6 +3,7 @@ import { Card } from '../components/Card';
 import { Tag } from '../components/Tag';
 import { ChevronDown, ChevronUp, MapPin, Building, Target, Edit2, Globe, Award, Zap, Gift, Book, Star, GraduationCap } from 'lucide-react';
 import { useTelegram } from '../lib/twa';
+import { API_URL } from '../config';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import './Profile.css';
@@ -26,7 +27,7 @@ export default function Profile() {
 
     useEffect(() => {
         if (user?.id) {
-            fetch(`https://wave-match-production.up.railway.app/api/profile/${user.id}`)
+            fetch(`${API_URL}/api/profile/${user.id}`)
                 .then(res => res.json())
                 .then(data => {
                     if (data?.profile) {

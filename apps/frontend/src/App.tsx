@@ -12,6 +12,7 @@ import Messages from './pages/Messages';
 import Subscription from './pages/Subscription';
 import { BottomNav } from './components/BottomNav';
 import { initTWA, tg } from './lib/twa';
+import { API_URL } from './config';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -23,7 +24,7 @@ function App() {
     const fetchInit = async () => {
       try {
         if (tg.initDataUnsafe?.user) {
-          const res = await fetch('https://wave-match-production.up.railway.app/api/users/init', {
+          const res = await fetch(`${API_URL}/api/users/init`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

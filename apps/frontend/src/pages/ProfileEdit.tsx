@@ -5,6 +5,7 @@ import { Button } from '../components/Button';
 import { Card } from '../components/Card';
 import { ArrowLeft, Sparkles, Copy, Check, Award, Book, Star, Zap, GraduationCap, Plus, Trash2 } from 'lucide-react';
 import { useTelegram } from '../lib/twa';
+import { API_URL } from '../config';
 import { getAIPrompt } from '../i18n';
 import './ProfileEdit.css';
 
@@ -41,7 +42,7 @@ export default function ProfileEdit() {
 
     useEffect(() => {
         if (user?.id) {
-            fetch(`https://wave-match-production.up.railway.app/api/profile/${user.id}`)
+            fetch(`${API_URL}/api/profile/${user.id}`)
                 .then(res => res.json())
                 .then(data => {
                     if (data?.profile) {
@@ -110,7 +111,7 @@ export default function ProfileEdit() {
     const handleSave = async () => {
         setIsSaving(true);
         try {
-            await fetch('https://wave-match-production.up.railway.app/api/profile', {
+            await fetch(`${API_URL}/api/profile`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

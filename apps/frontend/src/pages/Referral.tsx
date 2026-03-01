@@ -5,6 +5,7 @@ import { Button } from '../components/Button';
 import { Card } from '../components/Card';
 import { ArrowLeft, Gift, Share2, Copy, Check, Users } from 'lucide-react';
 import { useTelegram, tg } from '../lib/twa';
+import { API_URL } from '../config';
 import './Referral.css';
 
 export default function Referral() {
@@ -17,7 +18,7 @@ export default function Referral() {
 
     useEffect(() => {
         if (user?.id) {
-            fetch(`https://wave-match-production.up.railway.app/api/users/${user.id}/referrals`)
+            fetch(`${API_URL}/api/users/${user.id}/referrals`)
                 .then(res => res.json())
                 .then(data => {
                     if (data && typeof data.invited === 'number') {

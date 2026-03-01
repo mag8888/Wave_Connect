@@ -4,16 +4,20 @@ import { Button } from '../components/Button';
 import { Card } from '../components/Card';
 import { useTelegram } from '../lib/twa';
 import { useTranslation } from 'react-i18next';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, Plus } from 'lucide-react';
+import { API_URL } from '../config';
 import './Onboarding.css';
 
-type Step = 'welcome' | 'role' | 'goal';
+type Step = 'welcome' | 'role' | 'goal' | 'hobbies';
 
 export default function Onboarding() {
     const [step, setStep] = useState<Step>('welcome');
     const [showMoreRoles, setShowMoreRoles] = useState(false);
     const [customRole, setCustomRole] = useState('');
     const [selectedRole, setSelectedRole] = useState('');
+    const [selectedGoal, setSelectedGoal] = useState('');
+    const [selectedHobbies, setSelectedHobbies] = useState<string[]>([]);
+    const [customHobby, setCustomHobby] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const navigate = useNavigate();
     const { user } = useTelegram();
@@ -26,17 +30,21 @@ export default function Onboarding() {
         if (nextStep === 'goal' && selectionValue) {
             setSelectedRole(selectionValue);
             setStep(nextStep);
+        } else if (nextStep === 'hobbies' && selectionValue) {
+            setSelectedGoal(selectionValue);
+            setStep(nextStep);
         } else if (nextStep === 'home') {
             const submitOnboarding = async () => {
                 setIsSubmitting(true);
                 try {
-                    await fetch('https://wave-match-production.up.railway.app/api/users/onboard', {
+                    await fetch(`${API_URL}/api/users/onboard`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             telegramId: user?.id,
                             role: selectedRole,
-                            goal1Year: selectionValue || ''
+                            goal1Year: selectedGoal,
+                            hobbies: selectedHobbies
                         })
                     });
                     navigate('/home');
@@ -48,6 +56,14 @@ export default function Onboarding() {
             submitOnboarding();
         } else {
             setStep(nextStep);
+        }
+    };
+
+    const toggleHobby = (hobby: string) => {
+        if (selectedHobbies.includes(hobby)) {
+            setSelectedHobbies(selectedHobbies.filter(h => h !== hobby));
+        } else {
+            setSelectedHobbies([...selectedHobbies, hobby]);
         }
     };
 
@@ -151,13 +167,66 @@ export default function Onboarding() {
                                 <button
                                     key={goal}
                                     className="role-option"
-                                    disabled={isSubmitting}
-                                    onClick={() => handleNext('home', goal)}
+                                    onClick={() => handleNext('hobbies', goal)}
                                 >
-                                    {isSubmitting ? '...' : goal}
+                                    {goal}
                                 </button>
                             ))}
                         </div>
+                    </div>
+                )}
+
+                {step === 'hobbies' && (
+                    <div className="step-content fade-in">
+                        <h2 className="step-title">Your hobbies & interests?</h2>
+                        <p className="step-desc">Select a few or add your own.</p>
+                        <div className="flex flex-wrap gap-2 mt-6 justify-center">
+                            {['Golf', 'Biohacking', 'Sailing', 'Web3', 'AI', 'Travel', 'Investing', 'Fitness'].map(hobby => (
+                                <button
+                                    key={hobby}
+                                    className={`px-4 py-2 rounded-full border transition-colors ${selectedHobbies.includes(hobby) ? 'bg-primary border-primary text-white' : 'bg-surface border-white-10 text-secondary'}`}
+                                    onClick={() => toggleHobby(hobby)}
+                                >
+                                    {hobby}
+                                </button>
+                            ))}
+                        </div>
+                        <div className="mt-6 w-full flex gap-2 items-stretch max-w-sm mx-auto">
+                            <input
+                                type="text"
+                                placeholder="Add custom..."
+                                className="flex-1 bg-surface border border-white-10 rounded-xl px-4 py-3 min-w-0 placeholder:text-secondary text-sm focus:outline-none focus:border-[rgba(139,92,246,0.5)] transition-colors"
+                                value={customHobby}
+                                onChange={(e) => setCustomHobby(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' && customHobby.trim()) {
+                                        toggleHobby(customHobby.trim());
+                                        setCustomHobby('');
+                                    }
+                                }}
+                            />
+                            <Button
+                                onClick={() => {
+                                    if (customHobby.trim()) {
+                                        toggleHobby(customHobby.trim());
+                                        setCustomHobby('');
+                                    }
+                                }}
+                                variant="secondary"
+                                className="px-4"
+                            >
+                                <Plus size={18} />
+                            </Button>
+                        </div>
+
+                        <Button
+                            className="mt-8"
+                            fullWidth
+                            onClick={() => handleNext('home')}
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting ? '...' : t('onboarding.complete')}
+                        </Button>
                     </div>
                 )}
             </Card>

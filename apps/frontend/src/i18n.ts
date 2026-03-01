@@ -11,9 +11,15 @@ const aiPromptEn = `Act as an elite business profiler. I will provide you with a
   "goal1Year": "Close Seed round and expand",
   "goal5Year": "Reach $100M valuation",
   "mission": "Democratize access to tier-1 business networking",
-  "tags": ["Investments", "Scaling", "IT"]
+  "tags": ["Investments", "Scaling", "IT"],
+  "hobbies": ["Golf", "Biohacking"],
+  "books": ["Thinking, Fast and Slow", "Zero to One"],
+  "education": [
+    { "name": "MBA", "icon": "Award" },
+    { "name": "Y Combinator", "icon": "Zap" }
+  ]
 }
-If any data is missing from the bio, guess intelligently based on context or return "Not specified". Return ONLY raw JSON without markdown.`;
+If any data is missing from the bio, guess intelligently based on context or return "Not specified". For 'education', choose a fitting icon name from (Award, Book, Star, Zap, GraduationCap). Return ONLY raw JSON without markdown.`;
 
 const aiPromptRu = `Действуй как элитный бизнес-профайлер. Я предоставлю тебе биографию или ссылки на соцсети. Извлеки информацию строго в этом формате JSON:
 {
@@ -24,9 +30,15 @@ const aiPromptRu = `Действуй как элитный бизнес-проф
   "goal1Year": "Закрыть Seed раунд",
   "goal5Year": "Достигнуть оценки $100M",
   "mission": "Демократизировать доступ к премиум нетворкингу",
-  "tags": ["Инвестиции", "Масштабирование", "IT"]
+  "tags": ["Инвестиции", "Масштабирование", "IT"],
+  "hobbies": ["Гольф", "Биохакинг"],
+  "books": ["Думай медленно, решай быстро", "От нуля к единице"],
+  "education": [
+    { "name": "MBA", "icon": "Award" },
+    { "name": "Сколково", "icon": "Star" }
+  ]
 }
-Если каких-то данных нет, догадайся логично из контекста или напиши "Не указано". Верни ТОЛЬКО сырой JSON без markdown.`;
+Если каких-то данных нет, догадайся логично из контекста или напиши "Не указано". Для 'education' выбери подходящую иконку (Award, Book, Star, Zap, GraduationCap). Верни ТОЛЬКО сырой JSON без markdown.`;
 
 // Define resources for English and Russian
 const resources = {
@@ -34,13 +46,24 @@ const resources = {
         translation: {
             "onboarding": {
                 "welcome": "Welcome",
+                "subtitle": "Premium Business Networking",
+                "tg_linked": "Your Telegram profile is successfully linked.",
+                "step_of": "Step {{current}} of {{total}}",
                 "complete_profile": "Complete Profile",
                 "select_role": "Select your role",
+                "choose_role": "Choose your primary role",
                 "role_entrepreneur": "Entrepreneur",
                 "role_investor": "Investor",
                 "role_expert": "Expert",
                 "role_creator": "Creator",
+                "role_developer": "Developer",
+                "role_designer": "Designer",
+                "role_marketer": "Marketer",
+                "role_product_manager": "Product Manager",
+                "more_roles": "More",
+                "less_roles": "Less",
                 "select_goal": "What's your primary goal?",
+                "select_goal_desc": "Select what you are looking for",
                 "goal_networking": "Networking & Partnerships",
                 "goal_investment": "Finding Investment",
                 "goal_mentorship": "Mentorship",
@@ -84,7 +107,10 @@ const resources = {
                 "1_year_goal": "1 Year Goal",
                 "5_year_goal": "5 Year Goal",
                 "mission": "Mission",
-                "interests": "Interests"
+                "interests": "Interests",
+                "hobbies": "Hobbies",
+                "books": "Favorite Books",
+                "education": "Education & Courses"
             },
             "edit": {
                 "title": "Edit Profile",
@@ -108,13 +134,24 @@ const resources = {
         translation: {
             "onboarding": {
                 "welcome": "Добро пожаловать",
+                "subtitle": "Премиальный бизнес-нетворкинг",
+                "tg_linked": "Ваш профиль Telegram успешно привязан.",
+                "step_of": "Шаг {{current}} из {{total}}",
                 "complete_profile": "Заполнить профиль",
                 "select_role": "Выберите вашу роль",
+                "choose_role": "Выберите вашу основную роль",
                 "role_entrepreneur": "Предприниматель",
                 "role_investor": "Инвестор",
                 "role_expert": "Эксперт",
                 "role_creator": "Креатор",
+                "role_developer": "Разработчик",
+                "role_designer": "Дизайнер",
+                "role_marketer": "Маркетолог",
+                "role_product_manager": "Продакт Менеджер",
+                "more_roles": "более",
+                "less_roles": "свернуть",
                 "select_goal": "Ваша главная цель?",
+                "select_goal_desc": "Выберите, что вы ищете",
                 "goal_networking": "Нетворкинг и партнерства",
                 "goal_investment": "Поиск инвестиций",
                 "goal_mentorship": "Менторство",
@@ -158,7 +195,10 @@ const resources = {
                 "1_year_goal": "Цель на 1 год",
                 "5_year_goal": "Цель на 5 лет",
                 "mission": "Миссия",
-                "interests": "Интересы"
+                "interests": "Интересы",
+                "hobbies": "Хобби и увлечения",
+                "books": "Любимые книги",
+                "education": "Обучение и курсы"
             },
             "edit": {
                 "title": "Редактирование",

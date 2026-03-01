@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Card } from '../components/Card';
 import { Tag } from '../components/Tag';
-import { ChevronDown, ChevronUp, MapPin, Building, Target, Edit2, Globe } from 'lucide-react';
+import { ChevronDown, ChevronUp, MapPin, Building, Target, Edit2, Globe, Award, Zap } from 'lucide-react';
 import { useTelegram } from '../lib/twa';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -11,7 +11,8 @@ export default function Profile() {
     const [sections, setSections] = useState({
         business: true,
         goals: false,
-        interests: true
+        interests: true,
+        education: true
     });
     const { user } = useTelegram();
     const { t, i18n } = useTranslation();
@@ -128,6 +129,48 @@ export default function Profile() {
                                 <span className="font-semibold">{t('profile.mission')}</span>
                             </div>
                             <p className="text-sm text-secondary pl-6">Democratize access to tier-1 business networking for emerging founders.</p>
+                        </div>
+                    </div>
+                )}
+            </Card>
+
+            {/* Education & Hobbies */}
+            <Card variant="elevated" className="section-card mt-4">
+                <div className="section-header-toggle" onClick={() => toggleSection('education')}>
+                    <h2 className="section-title">{t('profile.education')}</h2>
+                    {sections.education ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                </div>
+
+                {sections.education && (
+                    <div className="section-body mt-4">
+                        {/* Mock education data for viewing */}
+                        <div className="flex flex-col gap-3 mb-6">
+                            <div className="flex items-center gap-3 bg-surface p-3 rounded-xl border border-white-10">
+                                <Award className="text-accent" size={20} />
+                                <span className="font-medium text-sm">MBA, Harvard Business School</span>
+                            </div>
+                            <div className="flex items-center gap-3 bg-surface p-3 rounded-xl border border-white-10">
+                                <Zap className="text-warning" size={20} />
+                                <span className="font-medium text-sm">Y Combinator Alumni (S21)</span>
+                            </div>
+                        </div>
+
+                        <div className="mb-4">
+                            <h3 className="text-xs uppercase text-secondary font-semibold mb-2 tracking-wider">{t('profile.hobbies')}</h3>
+                            <div className="tags-grid">
+                                {['Golf', 'Biohacking', 'Sailing'].map((tag) => (
+                                    <Tag key={tag} active={false}>{tag}</Tag>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="mb-4">
+                            <h3 className="text-xs uppercase text-secondary font-semibold mb-2 tracking-wider">{t('profile.books')}</h3>
+                            <div className="tags-grid">
+                                {['Zero to One', 'Thinking Fast and Slow'].map((book) => (
+                                    <Tag key={book} active={false}>{book}</Tag>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 )}

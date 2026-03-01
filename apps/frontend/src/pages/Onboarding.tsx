@@ -12,6 +12,9 @@ type Step = 'welcome' | 'role' | 'goal';
 export default function Onboarding() {
     const [step, setStep] = useState<Step>('welcome');
     const [showMoreRoles, setShowMoreRoles] = useState(false);
+    const [customRole, setCustomRole] = useState('');
+    const [selectedRole, setSelectedRole] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const navigate = useNavigate();
     const { user } = useTelegram();
     const { t } = useTranslation();
@@ -19,9 +22,30 @@ export default function Onboarding() {
     const firstName = user?.first_name || 'Guest';
     const avatarUrl = user?.photo_url;
 
-    const handleNext = (nextStep: Step | 'home') => {
-        if (nextStep === 'home') {
-            navigate('/home');
+    const handleNext = (nextStep: Step | 'home', selectionValue?: string) => {
+        if (nextStep === 'goal' && selectionValue) {
+            setSelectedRole(selectionValue);
+            setStep(nextStep);
+        } else if (nextStep === 'home') {
+            const submitOnboarding = async () => {
+                setIsSubmitting(true);
+                try {
+                    await fetch('https://wave-match-production.up.railway.app/api/users/onboard', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            telegramId: user?.id,
+                            role: selectedRole,
+                            goal1Year: selectionValue || ''
+                        })
+                    });
+                    navigate('/home');
+                } catch (e) {
+                    console.error('Failed onboarding sync:', e);
+                    setIsSubmitting(false);
+                }
+            };
+            submitOnboarding();
         } else {
             setStep(nextStep);
         }
@@ -62,7 +86,7 @@ export default function Onboarding() {
                                 <button
                                     key={role}
                                     className="role-option"
-                                    onClick={() => handleNext('goal')}
+                                    onClick={() => handleNext('goal', role)}
                                 >
                                     {role}
                                 </button>
@@ -71,7 +95,7 @@ export default function Onboarding() {
                                 <button
                                     key={role}
                                     className="role-option fade-in"
-                                    onClick={() => handleNext('goal')}
+                                    onClick={() => handleNext('goal', role)}
                                 >
                                     {role}
                                 </button>
@@ -87,13 +111,33 @@ export default function Onboarding() {
                                 {t('onboarding.more_roles')} <ChevronDown size={20} />
                             </button>
                         ) : (
-                            <button
-                                className="mt-4 flex items-center justify-center gap-1 mx-auto text-danger text-lg hover:opacity-80 transition-opacity"
-                                onClick={() => setShowMoreRoles(false)}
-                                style={{ color: '#ef4444' }}
-                            >
-                                {t('onboarding.less_roles')} <ChevronUp size={20} />
-                            </button>
+                            <div className="fade-in">
+                                <button
+                                    className="mt-4 flex items-center justify-center gap-1 mx-auto text-danger text-lg hover:opacity-80 transition-opacity"
+                                    onClick={() => setShowMoreRoles(false)}
+                                    style={{ color: '#ef4444' }}
+                                >
+                                    {t('onboarding.less_roles')} <ChevronUp size={20} />
+                                </button>
+
+                                <div className="mt-6 w-full flex gap-2 items-stretch max-w-sm mx-auto">
+                                    <input
+                                        type="text"
+                                        placeholder="Or enter your custom role..."
+                                        className="flex-1 bg-surface border border-white-10 rounded-xl px-4 py-3 min-w-0 placeholder:text-secondary text-sm focus:outline-none focus:border-[rgba(139,92,246,0.5)] transition-colors"
+                                        value={customRole}
+                                        onChange={(e) => setCustomRole(e.target.value)}
+                                        onKeyDown={(e) => e.key === 'Enter' && customRole.trim() && handleNext('goal', customRole)}
+                                    />
+                                    <Button
+                                        onClick={() => handleNext('goal', customRole)}
+                                        disabled={!customRole.trim()}
+                                        className="px-6"
+                                    >
+                                        Next
+                                    </Button>
+                                </div>
+                            </div>
                         )}
                     </div>
                 )}
@@ -107,9 +151,10 @@ export default function Onboarding() {
                                 <button
                                     key={goal}
                                     className="role-option"
-                                    onClick={() => handleNext('home')}
+                                    disabled={isSubmitting}
+                                    onClick={() => handleNext('home', goal)}
                                 >
-                                    {goal}
+                                    {isSubmitting ? '...' : goal}
                                 </button>
                             ))}
                         </div>

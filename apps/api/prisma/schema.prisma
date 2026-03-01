@@ -46,6 +46,9 @@ model Profile {
   mission     String?
   
   tags        String[] // ["Investments", "Scaling", ...]
+  hobbies     String[]
+  books       String[]
+  education   Json?
   
   completion  Int      @default(0) // 0-100%
   

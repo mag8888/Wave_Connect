@@ -1,15 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../components/Button';
 import { Card } from '../components/Card';
 import { ArrowLeft, Sparkles, Copy, Check, Award, Book, Star, Zap, GraduationCap, Plus, Trash2 } from 'lucide-react';
+import { useTelegram } from '../lib/twa';
 import { getAIPrompt } from '../i18n';
 import './ProfileEdit.css';
 
 export default function ProfileEdit() {
     const { t, i18n } = useTranslation();
     const navigate = useNavigate();
+    const { user } = useTelegram();
 
     // GPT prompt logic
     const [promptCopied, setPromptCopied] = useState(false);
@@ -34,6 +36,39 @@ export default function ProfileEdit() {
 
     const [newEduName, setNewEduName] = useState('');
     const [newEduIcon, setNewEduIcon] = useState('Award');
+    const [isLoading, setIsLoading] = useState(true);
+    const [isSaving, setIsSaving] = useState(false);
+
+    useEffect(() => {
+        if (user?.id) {
+            fetch(`https://wave-match-production.up.railway.app/api/profile/${user.id}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data?.profile) {
+                        const p = data.profile;
+                        // Map arrays or strings safely
+                        setFormData({
+                            turnover: p.turnover || '',
+                            industry: p.industry || '',
+                            experience: p.experience || '',
+                            helpOffer: p.helpOffer || '',
+                            goal1Year: p.goal1Year || '',
+                            goal5Year: p.goal5Year || '',
+                            mission: p.mission || '',
+                            tags: Array.isArray(p.tags) ? p.tags.join(', ') : (p.tags || ''),
+                            hobbies: Array.isArray(p.hobbies) ? p.hobbies.join(', ') : (p.hobbies || ''),
+                            books: Array.isArray(p.books) ? p.books.join(', ') : (p.books || ''),
+                            // Prisma doesn't natively have JSON list of objects unless configured, so assume education is stored as JSON
+                            education: typeof p.education === 'string' ? JSON.parse(p.education) : (p.education || [])
+                        });
+                    }
+                })
+                .catch(console.error)
+                .finally(() => setIsLoading(false));
+        } else {
+            setIsLoading(false);
+        }
+    }, [user?.id]);
 
     // Lucide Icons Map
     const IconMap: Record<string, any> = {
@@ -72,10 +107,26 @@ export default function ProfileEdit() {
         }
     };
 
-    const handleSave = () => {
-        // Here we would normally make an API call to save to backend Profile model
-        console.log('Saving profile', formData);
-        navigate('/profile');
+    const handleSave = async () => {
+        setIsSaving(true);
+        try {
+            await fetch('https://wave-match-production.up.railway.app/api/profile', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    telegramId: user?.id,
+                    ...formData,
+                    tags: formData.tags.split(',').map(s => s.trim()).filter(Boolean),
+                    hobbies: formData.hobbies.split(',').map(s => s.trim()).filter(Boolean),
+                    books: formData.books.split(',').map(s => s.trim()).filter(Boolean),
+                    education: formData.education // this will be JSON
+                })
+            });
+            navigate('/profile');
+        } catch (e) {
+            console.error('Failed to save profile', e);
+            setIsSaving(false);
+        }
     };
 
     return (
@@ -279,8 +330,8 @@ export default function ProfileEdit() {
                     </div>
                 </div>
 
-                <Button className="mt-8 mb-8" fullWidth onClick={handleSave}>
-                    {t('edit.save')}
+                <Button className="mt-8 mb-8" fullWidth onClick={handleSave} disabled={isSaving || isLoading}>
+                    {isSaving ? '...' : t('edit.save')}
                 </Button>
             </div>
         </div>
